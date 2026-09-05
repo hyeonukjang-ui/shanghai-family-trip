@@ -78,7 +78,7 @@ a{color:var(--brand)}
 
 /* header */
 .top{background:var(--surface);border-bottom:1px solid var(--border-soft)}
-.top-in{max-width:1680px;margin:0 auto;padding:18px 24px 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);gap:14px 32px;align-items:center}
+.top-in{max-width:1680px;margin:0 auto;padding:16px 24px 14px}
 .title h1{font-size:26px;font-weight:700;line-height:1.3;letter-spacing:-0.02em}
 .title h1 em{font-style:normal;color:var(--brand)}
 .title .sub{margin-top:4px;font-size:14px;color:var(--text-muted)}
@@ -99,7 +99,7 @@ a{color:var(--brand)}
 .wrap>*,.top-in>*,.col>*,.card,.map{min-width:0}
 html,body{max-width:100%;overflow-x:hidden}
 .col{grid-template-columns:minmax(0,1fr)}
-.map svg{max-width:100%}
+.map>svg#map{max-width:100%}
 .col{display:grid;gap:20px}
 .card{background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;box-shadow:var(--z1)}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 0;flex-wrap:wrap}
@@ -115,18 +115,18 @@ html,body{max-width:100%;overflow-x:hidden}
 .map{padding:12px}
 #lmap{height:560px;border-radius:8px;background:var(--land);display:none}
 #lmap.on{display:block}
-.map svg{display:block;width:100%;height:auto;border-radius:8px;background:var(--land)}
-.map svg.off{display:none}
+.map>svg#map{display:block;width:100%;height:auto;border-radius:8px;background:var(--land)}
+.map>svg#map.off{display:none}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 4px 0;font-size:12.5px;color:var(--text-muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
 .legend i.hotel{border-radius:3px;background:var(--text)}
 .legend i.est{background:transparent;border:1.5px dashed var(--text-subtle)}
 .legend .src{margin-left:auto;color:var(--text-faint);font-size:12px}
-.pin text{font-family:var(--font);font-size:19px;font-weight:500;fill:var(--text);paint-order:stroke;stroke:var(--land);stroke-width:5px;stroke-linejoin:round}
-.pin .num{font-size:14px;font-weight:700;fill:#fff;stroke:none;text-anchor:middle}
-.pin.dim{opacity:.3}
-.route{fill:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
-.route.walk{stroke-dasharray:2 8}
+#map .pin text{font-family:var(--font);font-size:19px;font-weight:500;fill:var(--text);paint-order:stroke;stroke:var(--land);stroke-width:5px;stroke-linejoin:round}
+#map .pin .num{font-size:14px;font-weight:700;fill:#fff;stroke:none;text-anchor:middle}
+#map .pin.dim{opacity:.3}
+#map .route{fill:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+#map .route.walk{stroke-dasharray:2 8}
 .offmap text{font-family:var(--font);font-size:15px;fill:var(--text-muted);paint-order:stroke;stroke:var(--land);stroke-width:4px}
 .maplabel{font-family:var(--font);font-size:17px;font-weight:600;fill:var(--water);letter-spacing:.04em;opacity:.85}
 .district{font-family:var(--font);font-size:14px;font-weight:500;fill:var(--text-faint);letter-spacing:.1em}
@@ -271,13 +271,10 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 @media (max-width:1199px){
   .wrap{grid-template-columns:1fr}
-  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .top-in{grid-template-columns:1fr}
   #lmap{height:420px}
 }
 @media (max-width:640px){
   .top-in,.wrap{padding-left:14px;padding-right:14px}
-  .facts{grid-template-columns:1fr}
   .grid{grid-template-columns:1fr}
   .ev,.leg{grid-template-columns:46px 24px minmax(0,1fr)}
   .ev .t{font-size:13.5px}
@@ -293,11 +290,6 @@ html,body{max-width:100%;overflow-x:hidden}
       <h1>상하이 <em>가족여행</em> 일정판</h1>
       <div class="sub">2026.09.12 (토) – 09.15 (화) · 3박 4일 · 가족 7인 + 오연누나 = <b>8인</b> · 어른들 컨디션 우선</div>
     </div>
-    <div class="facts">
-      <div class="fact"><div class="k">출국 · 가족 7인</div><div class="v"><span class="code">9C7050</span> 청주 <b>12:05</b> → 푸동 T2 <b>13:10</b><small>08:30 청주공항 집결 · 공항에서 점심</small></div></div>
-      <div class="fact"><div class="k">귀국 · 가족 7인</div><div class="v"><span class="code">9C7049</span> 푸동 T2 <b>17:55</b> → 청주 <b>21:05</b><small>마지막 만찬 칸톤8 (T2)</small></div></div>
-      <div class="fact"><div class="k">오연누나</div><div class="v"><span class="code">ZE821</span> 인천 T1 23:40 → 푸동 T2 <b>01:10</b><small>귀국 MU5051 푸동 <b>T1</b> 17:40 → 인천 20:45</small></div></div>
-      <div class="fact"><div class="k">숙소 · 예보</div><div class="v"><b>그랜드 센트럴 호텔</b> 九江路505号<div class="weather"><span class="badge b-gray"><b>토</b>맑음</span><span class="badge b-gray"><b>일</b>구름</span><span class="badge b-gray"><b>월</b>구름</span><span class="badge b-brand"><b>화</b>비</span></div></div></div>
     </div>
   </div>
 </header>
@@ -347,6 +339,13 @@ html,body{max-width:100%;overflow-x:hidden}
     </div>
     <div class="ck-body" id="ck"></div>
     <div class="info">
+      <div class="ifact"><div class="k">항공</div>
+        <table>
+          <tr><td>출국 7인</td><td><b>9C7050</b> 청주 12:05 → 푸동 T2 13:10<br><small style="color:var(--text-muted)">08:30 청주공항 집결 · 공항에서 점심</small></td></tr>
+          <tr><td>귀국 7인</td><td><b>9C7049</b> 푸동 T2 17:55 → 청주 21:05</td></tr>
+          <tr><td>오연누나</td><td><b>ZE821</b> 인천 T1 23:40 → 푸동 T2 01:10 (13일)<br><b>MU5051</b> 푸동 <b>T1</b> 17:40 → 인천 20:45</td></tr>
+          <tr><td>예보</td><td>토 맑음 · 일 구름 · 월 구름 · <b>화 비</b></td></tr>
+        </table></div>
       <div class="ifact"><div class="k">숙소 예약번호 · 上海中央大酒店 九江路505号 · +86-21-6330-0931</div>
         <table>
           <tr><td>트립닷컴</td><td><b>1400826992024454</b> · 외삼촌·외숙모</td></tr>
@@ -595,12 +594,12 @@ function tryLeaflet(cb){
   const t=setTimeout(()=>{if(!done){done=true;cb(false);}},4000);
   img.onload=()=>{if(!done){done=true;clearTimeout(t);cb(true);}};
   img.onerror=()=>{if(!done){done=true;clearTimeout(t);cb(false);}};
-  img.src='https://a.basemaps.cartocdn.com/rastertiles/voyager/12/3370/1671.png?t='+Date.now();
+  img.src='https://tile.openstreetmap.org/12/3370/1671.png?t='+Date.now();
 }
 function initLeaflet(){
   const box=document.getElementById('lmap'); box.classList.add('on'); svg.classList.add('off');
   lmap=L.map('lmap',{zoomControl:true,attributionControl:true,scrollWheelZoom:false});
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap &copy; CARTO · 경로 OSRM'}).addTo(lmap);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors · 경로 OSRM'}).addTo(lmap);
   lLayer=L.layerGroup().addTo(lmap);
   document.getElementById('mapsrc').textContent='좌표 OSM 지오코딩 · 경로·소요시간 OSRM(교통 보정 1.35배)';
 }

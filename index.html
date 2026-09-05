@@ -162,7 +162,7 @@ html,body{max-width:100%;overflow-x:hidden}
 .jump button .d{display:block;font-size:11.5px;font-weight:700;color:var(--dc);letter-spacing:.02em}
 .jump button .n{display:block;font-size:14px;font-weight:600;color:var(--text)}
 .jump button .m{display:block;font-size:12px;color:var(--text-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.jump button.on{border-color:var(--dc);background:color-mix(in srgb,var(--dc) 9%,var(--surface))}
+.jump button[aria-selected="true"]{border-color:var(--dc);background:color-mix(in srgb,var(--dc) 9%,var(--surface))}
 .days{padding:8px 16px 16px}
 .dsec{padding-top:14px}
 .dsec+.dsec{margin-top:10px;border-top:8px solid var(--surface-2);padding-top:18px}
@@ -182,7 +182,7 @@ html,body{max-width:100%;overflow-x:hidden}
 .ev.see .rail .k{border-color:var(--dc)}
 .ev.flight .rail .k{border-radius:3px;transform:rotate(45deg)}
 .ev .body{min-width:0}
-.ev .head{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start}
+.ev .head{display:block}
 .chk{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--border-strong);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;margin-top:1px;transition:all .15s}
 .chk::after{content:'';width:11px;height:6px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
 .chk.on{background:var(--ink);border-color:var(--ink)}
@@ -239,21 +239,21 @@ html,body{max-width:100%;overflow-x:hidden}
 .grp-h{display:flex;justify-content:space-between;align-items:baseline;padding:4px 2px 8px}
 .grp-h span:first-child{font-size:13.5px;font-weight:700;color:var(--text-muted)}
 .grp-h span:last-child{font-size:12.5px;color:var(--text-subtle)}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.item{display:grid;grid-template-columns:22px minmax(0,1fr);gap:9px;padding:11px 11px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;min-width:0;transition:all .15s;user-select:none;position:relative}
-.item:hover{border-color:var(--border-strong)}
+.grid{display:grid;grid-template-columns:1fr;gap:0}
+.item{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;padding:9px 6px;border:0;border-bottom:1px solid var(--border-soft);background:transparent;cursor:pointer;min-width:0;transition:background .15s;user-select:none;position:relative;align-items:start}
+.item:last-child{border-bottom:0}
+.item:hover{background:var(--surface-2)}
+.item .row{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
 .item input{position:absolute;opacity:0;width:0;height:0}
 .item .box{width:22px;height:22px;border:1.5px solid var(--border-strong);border-radius:7px;background:var(--surface);display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px}
 .item input:checked + .box{background:var(--ink);border-color:var(--ink)}
 .item input:checked + .box::after{content:'';width:10px;height:6px;border-left:2.5px solid var(--on-ink);border-bottom:2.5px solid var(--on-ink);transform:rotate(-45deg) translate(1px,-1px);display:block}
 .item input:focus-visible + .box{outline:2px solid var(--brand);outline-offset:2px}
 .item .txt{font-size:14px;font-weight:500;line-height:1.45;word-break:keep-all}
-.item .sub{margin-top:5px;display:flex;flex-wrap:wrap;gap:4px}
-.item .sub .badge{font-size:11.5px;padding:1px 7px}
+.item .row .badge{font-size:11.5px;padding:1px 7px}
 .item a{font-size:13px;text-decoration:underline;text-underline-offset:2px;word-break:break-all}
-.item.done{background:var(--surface-2);border-color:transparent}
 .item.done .txt{color:var(--text-subtle);text-decoration:line-through;text-decoration-color:var(--border-strong)}
-.item.done .sub{opacity:.65}
+.item.done .row .badge{opacity:.6}
 .info{padding:0 16px 16px;display:grid;gap:10px}
 .ifact{background:var(--surface-2);border-radius:12px;padding:10px 14px}
 .ifact .k{font-size:12.5px;font-weight:600;color:var(--text-subtle);margin-bottom:3px}
@@ -275,8 +275,7 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 @media (max-width:640px){
   .top-in,.wrap{padding-left:14px;padding-right:14px}
-  .grid{grid-template-columns:1fr}
-  .ev,.leg{grid-template-columns:46px 24px minmax(0,1fr)}
+    .ev,.leg{grid-template-columns:46px 24px minmax(0,1fr)}
   .ev .t{font-size:13.5px}
   .addr .v{font-size:16px}
   #lmap{height:360px}
@@ -297,7 +296,7 @@ html,body{max-width:100%;overflow-x:hidden}
 <main class="wrap">
   <section class="col">
     <div class="card">
-      <div class="card-h"><h2>동선 지도</h2><div class="chips" id="mapchips"></div></div>
+      <div class="card-h"><h2>동선 지도</h2><span class="hint" id="maphint">선택한 날짜의 동선 · 숫자는 방문 순서</span></div>
       <div class="map">
         <div id="lmap"></div>
         <svg id="map" viewBox="0 0 640 830" role="img" aria-label="상하이 시내 동선 약도"></svg>
@@ -309,7 +308,7 @@ html,body{max-width:100%;overflow-x:hidden}
           <span><i style="background:var(--d4)"></i>4일차</span>
           <span><i class="est"></i>위치 추정</span>
           <span class="src" id="mapsrc"></span>
-          <span class="src" style="margin-left:0">DAY 선택 시 방문 순서·장소명 표시</span>
+          
         </div>
       </div>
     </div>
@@ -356,7 +355,7 @@ html,body{max-width:100%;overflow-x:hidden}
       <div class="ifact"><div class="k">식사 주의</div><div class="v">외숙모 못 드시는 음식 확인 · 고수 향 없는 음식 위주<small>주문 시 不要香菜 (búyào xiāngcài) = 고수 빼주세요</small></div></div>
       <div class="ifact"><div class="k">입국신고서</div><div class="v"><a href="https://s.nia.gov.cn/ArrivalCardFillingPC/entry-registation-home" target="_blank" rel="noopener">중국 입국카드 온라인 작성</a><small>출발일(토) 필수 · 누나들 제외 6인</small></div></div>
     </div>
-    <div class="saved"><span id="saved">체크·메모는 이 기기에 저장</span><span>build 09-05</span></div>
+    <div class="saved"><span id="saved">체크는 이 기기에 저장</span><span>build 09-05</span></div>
   </aside>
 </main>
 
@@ -502,7 +501,7 @@ const CK = [
 const LS='sh-trip-0912';
 const load=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(LS+':'+k));return v==null?d:v;}catch(e){return d;}};
 const save=(k,v)=>{try{localStorage.setItem(LS+':'+k,JSON.stringify(v));stamp();}catch(e){}};
-let ckState=load('ck',{}), evState=load('ev',{}), memos=load('memo',{}), mapDay=load('mapday',1), filter='all';
+let ckState=load('ck',{}), cur=load('day',1), filter='all';
 const isDone=it=>(it.id in ckState)?!!ckState[it.id]:!!it.done;
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function stamp(){document.getElementById('saved').textContent='이 기기에 저장됨 '+new Date().toTimeString().slice(0,8);}
@@ -628,23 +627,17 @@ function leafletRender(dayId){
 }
 function hexOfPin(k){for(const d of DAYS){if(d.route.includes(k))return d.hex;}return null;}
 
-/* ---------- map chips ---------- */
-const mapchips=document.getElementById('mapchips');
-function renderChips(){
-  mapchips.innerHTML=`<button class="chip" data-d="0" aria-pressed="${mapDay===0}" style="--dc:var(--dall)">전체</button>`+DAYS.map(d=>`<button class="chip" data-d="${d.id}" aria-pressed="${mapDay===d.id}" style="--dc:${d.color}">DAY ${d.id}</button>`).join('');
-}
-mapchips.addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;setMapDay(+b.dataset.d);});
-function setMapDay(id){mapDay=id;save('mapday',id);renderChips();renderMap();document.querySelectorAll('#jump button').forEach(b=>b.classList.toggle('on',+b.dataset.j===id));}
-function renderMap(){if(useLeaflet)leafletRender(mapDay);else svgRender(mapDay);}
-renderChips(); svgRender(mapDay);
-tryLeaflet(ok=>{useLeaflet=ok;if(ok){initLeaflet();leafletRender(mapDay);}else{document.getElementById('mapsrc').textContent='약도 · 좌표 OSM 지오코딩 · 경로 OSRM';}});
+/* ---------- map ---------- */
+function renderMap(){if(useLeaflet)leafletRender(cur);else svgRender(cur);}
+svgRender(cur);
+tryLeaflet(ok=>{useLeaflet=ok;if(ok){initLeaflet();leafletRender(cur);}else{document.getElementById('mapsrc').textContent='약도 · 좌표 OSM 지오코딩 · 경로 OSRM';}});
 
-/* ---------- itinerary (all days) ---------- */
+/* ---------- itinerary (selected day) ---------- */
 const jump=document.getElementById('jump'), daysEl=document.getElementById('days');
 function renderJump(){
-  jump.innerHTML=DAYS.map(d=>{const done=d.ev.filter((e,i)=>evState[`${d.id}-${i}`]).length;return `<button data-j="${d.id}" class="${mapDay===d.id?'on':''}" style="--dc:${d.color}"><span class="d">DAY ${d.id} · ${d.dow}</span><span class="n">${esc(d.date)}</span><span class="m">${done}/${d.ev.length} · ${esc(d.title)}</span></button>`;}).join('');
+  jump.innerHTML=DAYS.map(d=>`<button data-j="${d.id}" role="tab" aria-selected="${d.id===cur}" style="--dc:${d.color}"><span class="d">DAY ${d.id} · ${d.dow}</span><span class="n">${esc(d.date)}</span><span class="m">${esc(d.title)}</span></button>`).join('');
 }
-jump.addEventListener('click',e=>{const b=e.target.closest('[data-j]');if(!b)return;const id=+b.dataset.j;setMapDay(id);const sec=document.getElementById('day-'+id);if(sec){const y=sec.getBoundingClientRect().top+window.scrollY-jump.getBoundingClientRect().height-12;window.scrollTo({top:y,behavior:'smooth'});}});
+jump.addEventListener('click',e=>{const b=e.target.closest('[data-j]');if(!b)return;cur=+b.dataset.j;save('day',cur);renderJump();renderDay();renderMap();});
 function legRow(from,to){
   const li=legInfo(from,to); if(!li)return '';
   const parts=[`<b>택시 약 ${li.taxi}분</b> <span>${li.km}km</span>`];
@@ -652,66 +645,54 @@ function legRow(from,to){
   if(li.est)parts.push(`<span class="est">(위치 추정)</span>`);
   return `<div class="leg"><div></div><div class="rail"><span class="k"></span></div><div><span class="lg">이동 ${parts.join(' ')}</span></div></div>`;
 }
-function renderDays(){
-  let h='';
-  DAYS.forEach(d=>{
-    const order=orderOf(d); const done=d.ev.filter((e,i)=>evState[`${d.id}-${i}`]).length;
-    h+=`<section class="dsec" id="day-${d.id}" style="--dc:${d.color}"><div class="day-h"><h2><span>DAY ${d.id}</span> ${esc(d.date)} (${d.dow}) · ${esc(d.title)}</h2><div class="who"><b>인원</b> ${esc(d.who)} · ${done}/${d.ev.length} 완료</div></div>`;
-    let lastPin=null;
-    d.ev.forEach((e,i)=>{
-      const id=`${d.id}-${i}`, dn=!!evState[id], p=e.pin?P[e.pin]:null;
-      const from=e.from||(p&&p.lng?lastPin:null);
-      if(p&&p.lng&&from&&from!==e.pin&&(P[from].lng||P[from].off))h+=legRow(from,e.pin);
-      if(p&&p.off&&lastPin&&P[lastPin].lng)h+=legRow(lastPin,e.pin);
-      const first=!!p&&e.pin!==lastPin; if(p&&(p.lng||p.off))lastPin=e.pin;
-      const chips=[];
-      if(p&&order[e.pin]&&first)chips.push(`<span class="badge b-day" style="--dc:${d.color}">${order[e.pin]}</span>`);
-      if(e.who)chips.push(`<span class="badge b-gray">${esc(e.who)}</span>`);
-      if(e.by)chips.push(`<span class="badge b-gray">${esc(e.by)}</span>`);
-      if(e.eatTag)chips.push(`<span class="badge b-brand">식당 ${esc(e.eatTag)}</span>`);
-      if(e.ok)chips.push(`<span class="badge b-ok b-dot">${esc(e.ok)}</span>`);
-      if(e.todo)chips.push(`<span class="badge b-todo b-dot">할 일 · ${esc(e.todo)}</span>`);
-      let more='';
-      if(p&&first){
-        const hasAddr=!!p.addr;
-        more+=`<div class="addr${(p.est||!hasAddr)?' est':''}"><div class="l">${hasAddr?'택시 · 디디용 주소':'디디 검색어 · '+esc(p.addrNote||'주소 확인 필요')}</div><div class="v">${esc(hasAddr?p.addr:(p.zh||p.n))}</div><button class="cp" data-copy="${esc(hasAddr?p.addr:(p.zh||p.n))}">복사</button></div>`;
-        if(hasAddr&&p.addrNote)more+=`<div class="alt">${esc(p.addrNote)}</div>`;
-        if(!p.noloc)more+=`<div class="btns">${(p.link&&e.k!=='move')?`<a class="btn btn-primary" href="${p.link.u}" target="_blank" rel="noopener">${esc(p.link.l)} ↗</a>`:''}<a class="btn btn-outline" href="${mapsUrl(p.zh||p.n)}" target="_blank" rel="noopener">지도에서 보기</a></div>`;
-      } else if(p&&p.link&&e.k!=='move'){
-        more+=`<div class="btns"><a class="btn btn-primary" href="${p.link.u}" target="_blank" rel="noopener">${esc(p.link.l)} ↗</a></div>`;
-      }
-      more+=`<textarea class="memo" rows="1" placeholder="메모" data-memo="${id}">${esc(memos[id]||'')}</textarea>`;
-      h+=`<div class="ev ${e.k}${dn?' done':''}" data-ev="${id}">
-        <div class="t">${esc(e.t)}${e.t2?`<small>${esc(e.t2)}</small>`:''}</div>
-        <div class="rail"><span class="k"></span></div>
-        <div class="body">
-          <div class="head"><button class="chk${dn?' on':''}" data-chk="${id}" aria-pressed="${dn}" aria-label="완료 표시"></button>
-            <div><div class="name">${esc(e.n)}</div>${p&&p.zh?`<div class="zh">${esc(p.zh)}</div>`:''}</div></div>
-          ${chips.length?`<div class="meta">${chips.join('')}</div>`:''}
-          ${e.warn?`<div class="warn">${esc(e.warn)}</div>`:''}
-          ${e.desc?`<div class="desc">${esc(e.desc)}</div>`:''}
-          ${e.alt?`<div class="alt">${esc(e.alt)}</div>`:''}
-          <div class="more">${more}</div>
-        </div></div>`;
-    });
-    h+='</section>';
+function renderDay(){
+  const d=DAYS.find(x=>x.id===cur); const order=orderOf(d);
+  let h=`<section class="dsec" id="day-${d.id}" style="--dc:${d.color}"><div class="day-h"><h2><span>DAY ${d.id}</span> ${esc(d.date)} (${d.dow}) · ${esc(d.title)}</h2><div class="who"><b>인원</b> ${esc(d.who)}</div></div>`;
+  let lastPin=null;
+  d.ev.forEach((e,i)=>{
+    const p=e.pin?P[e.pin]:null;
+    const from=e.from||(p&&p.lng?lastPin:null);
+    if(p&&p.lng&&from&&from!==e.pin&&(P[from].lng||P[from].off))h+=legRow(from,e.pin);
+    if(p&&p.off&&lastPin&&P[lastPin].lng)h+=legRow(lastPin,e.pin);
+    const first=!!p&&e.pin!==lastPin; if(p&&(p.lng||p.off))lastPin=e.pin;
+    const chips=[];
+    if(p&&order[e.pin]&&first)chips.push(`<span class="badge b-day" style="--dc:${d.color}">${order[e.pin]}</span>`);
+    if(e.who)chips.push(`<span class="badge b-gray">${esc(e.who)}</span>`);
+    if(e.by)chips.push(`<span class="badge b-gray">${esc(e.by)}</span>`);
+    if(e.eatTag)chips.push(`<span class="badge b-brand">식당 ${esc(e.eatTag)}</span>`);
+    if(e.ok)chips.push(`<span class="badge b-ok b-dot">${esc(e.ok)}</span>`);
+    if(e.todo)chips.push(`<span class="badge b-todo b-dot">할 일 · ${esc(e.todo)}</span>`);
+    let more='';
+    if(p&&first){
+      const hasAddr=!!p.addr;
+      more+=`<div class="addr${(p.est||!hasAddr)?' est':''}"><div class="l">${hasAddr?'택시 · 디디용 주소':'디디 검색어 · '+esc(p.addrNote||'주소 확인 필요')}</div><div class="v">${esc(hasAddr?p.addr:(p.zh||p.n))}</div><button class="cp" data-copy="${esc(hasAddr?p.addr:(p.zh||p.n))}">복사</button></div>`;
+      if(hasAddr&&p.addrNote)more+=`<div class="alt">${esc(p.addrNote)}</div>`;
+      if(!p.noloc)more+=`<div class="btns">${(p.link&&e.k!=='move')?`<a class="btn btn-primary" href="${p.link.u}" target="_blank" rel="noopener">${esc(p.link.l)} ↗</a>`:''}<a class="btn btn-outline" href="${mapsUrl(p.zh||p.n)}" target="_blank" rel="noopener">지도에서 보기</a></div>`;
+    } else if(p&&p.link&&e.k!=='move'){
+      more+=`<div class="btns"><a class="btn btn-primary" href="${p.link.u}" target="_blank" rel="noopener">${esc(p.link.l)} ↗</a></div>`;
+    }
+    h+=`<div class="ev ${e.k}">
+      <div class="t">${esc(e.t)}${e.t2?`<small>${esc(e.t2)}</small>`:''}</div>
+      <div class="rail"><span class="k"></span></div>
+      <div class="body">
+        <div class="head"><div class="name">${esc(e.n)}</div>${p&&p.zh?`<div class="zh">${esc(p.zh)}</div>`:''}</div>
+        ${chips.length?`<div class="meta">${chips.join('')}</div>`:''}
+        ${e.warn?`<div class="warn">${esc(e.warn)}</div>`:''}
+        ${e.desc?`<div class="desc">${esc(e.desc)}</div>`:''}
+        ${e.alt?`<div class="alt">${esc(e.alt)}</div>`:''}
+        ${more?`<div class="more">${more}</div>`:''}
+      </div></div>`;
   });
+  h+='</section>';
   daysEl.innerHTML=h;
-  daysEl.querySelectorAll('textarea.memo').forEach(autoGrow);
 }
-function autoGrow(t){t.style.height='auto';t.style.height=Math.max(40,t.scrollHeight)+'px';}
-daysEl.addEventListener('click',e=>{
-  const c=e.target.closest('[data-chk]');
-  if(c){const id=c.dataset.chk;evState[id]=!evState[id];save('ev',evState);const y=window.scrollY;renderJump();renderDays();window.scrollTo({top:y});return;}
-  const cp=e.target.closest('[data-copy]'); if(cp)copyText(cp.dataset.copy,cp);
-});
-daysEl.addEventListener('input',e=>{const t=e.target.closest('[data-memo]');if(!t)return;memos[t.dataset.memo]=t.value;save('memo',memos);autoGrow(t);});
+daysEl.addEventListener('click',e=>{const cp=e.target.closest('[data-copy]'); if(cp)copyText(cp.dataset.copy,cp);});
 function copyText(txt,btn){
   const ok=()=>{btn.textContent='복사됨';btn.classList.add('ok');setTimeout(()=>{btn.textContent='복사';btn.classList.remove('ok');},1500);};
   const fb=()=>{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(ta);};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(ok).catch(fb);else fb();
 }
-renderJump(); renderDays();
+renderJump(); renderDay();
 
 /* ---------- meals ---------- */
 document.getElementById('meals').innerHTML=MEALS.map(m=>`<div class="meal"><div class="when"><i style="background:var(--d${m.d})"></i>${esc(m.when)}</div><div><div class="r">${esc(m.r)}<span class="badge ${m.tag==='확정'?'b-ok':'b-brand'}">${esc(m.tag)}</span></div>${m.zh?`<div class="zh">${esc(m.zh)}</div>`:''}<div class="desc">${esc(m.desc)}</div><div class="alt"><b>대안</b> ${esc(m.alt)}</div></div></div>`).join('');
@@ -730,7 +711,7 @@ function renderCK(){
       if(i.sup)sub.push(`<span class="badge b-ok">${esc(i.sup)}</span>`);
       if(i.urgent)sub.push(`<span class="badge b-err">${esc(i.urgent)}</span>`);
       if(i.memo)sub.push(`<span class="badge b-gray">${esc(i.memo)}</span>`);
-      h+=`<label class="item${dn?' done':''}" data-id="${i.id}"><input type="checkbox" ${dn?'checked':''} aria-label="${esc(i.t)}"><span class="box" aria-hidden="true"></span><div><div class="txt">${esc(i.t)}</div>${sub.length?`<div class="sub">${sub.join('')}</div>`:''}${i.link?`<div class="sub"><a href="${i.link}" target="_blank" rel="noopener">입국신고서 작성 페이지 열기</a></div>`:''}</div></label>`;
+      h+=`<label class="item${dn?' done':''}" data-id="${i.id}"><input type="checkbox" ${dn?'checked':''} aria-label="${esc(i.t)}"><span class="box" aria-hidden="true"></span><div class="row"><span class="txt">${esc(i.t)}</span>${sub.join('')}${i.link?`<a href="${i.link}" target="_blank" rel="noopener">작성 페이지 열기</a>`:''}</div></label>`;
     });
     h+='</div></div>';
   });

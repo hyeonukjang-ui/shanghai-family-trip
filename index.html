@@ -299,7 +299,7 @@ html,body{max-width:100%;overflow-x:hidden}
 <main class="wrap">
   <section class="col">
     <div class="card">
-      <div class="card-h"><h2>동선 지도</h2><span class="hint" id="maphint">선택한 날짜의 동선 · 숫자는 방문 순서</span></div>
+      <div class="card-h"><h2>동선 지도</h2><div class="chips" id="maptoggle"><button class="chip" data-m="leaflet" aria-pressed="false" style="--dc:var(--brand)">지도</button><button class="chip" data-m="svg" aria-pressed="true" style="--dc:var(--brand)">약도</button></div></div>
       <div class="map">
         <div id="lmap"></div>
         <svg id="map" viewBox="0 0 640 830" role="img" aria-label="상하이 시내 동선 약도"></svg>
@@ -311,6 +311,7 @@ html,body{max-width:100%;overflow-x:hidden}
           <span><i style="background:var(--d4)"></i>4일차</span>
           <span><i class="est"></i>위치 추정</span>
           <span class="src" id="mapsrc"></span>
+          <span class="src" style="margin-left:0">지도는 드래그·+/−·더블클릭으로 이동·확대</span>
           
         </div>
       </div>
@@ -616,22 +617,31 @@ function isWalk(day,a,b){ // walking if the event arriving at b says 도보
 }
 drawBase();
 
-/* ---------- Leaflet real map (tiles allowed?) ---------- */
-let lmap=null, lLayer=null, useLeaflet=false;
-function tryLeaflet(cb){
-  if(typeof L==='undefined'){cb(false);return;}
-  const img=new Image(); let done=false;
-  const t=setTimeout(()=>{if(!done){done=true;cb(false);}},4000);
-  img.onload=()=>{if(!done){done=true;clearTimeout(t);cb(true);}};
-  img.onerror=()=>{if(!done){done=true;clearTimeout(t);cb(false);}};
-  img.src='https://tile.openstreetmap.org/12/3370/1671.png?t='+Date.now();
+/* ---------- Leaflet real map ---------- */
+let lmap=null, lLayer=null, tileLayer=null, useLeaflet=false, leafletReady=false, tilesOk=false;
+const box=document.getElementById('lmap'), toggle=document.getElementById('maptoggle');
+function setMode(mode){
+  useLeaflet=(mode==='leaflet'&&leafletReady);
+  box.classList.toggle('on',useLeaflet); svg.classList.toggle('off',useLeaflet);
+  toggle.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.m==='leaflet')===useLeaflet)));
+  document.getElementById('mapsrc').textContent=useLeaflet?'좌표 OSM 지오코딩 · 경로·소요시간 OSRM(교통 보정 1.35배)':'약도 · 좌표 OSM 지오코딩 · 경로 OSRM';
+  save('mapmode',useLeaflet?'leaflet':'svg');
+  if(useLeaflet){lmap.invalidateSize();leafletRender(cur);}else svgRender(cur);
 }
+toggle.addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b)return;if(b.dataset.m==='leaflet'&&!leafletReady)return;setMode(b.dataset.m);});
 function initLeaflet(){
-  const box=document.getElementById('lmap'); box.classList.add('on'); svg.classList.add('off');
-  lmap=L.map('lmap',{zoomControl:true,attributionControl:true,scrollWheelZoom:false});
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors · 경로 OSRM'}).addTo(lmap);
+  if(typeof L==='undefined'){toggle.querySelector('[data-m="leaflet"]').hidden=true;setMode('svg');return;}
+  leafletReady=true;
+  box.classList.add('on'); // must be visible for correct size
+  lmap=L.map('lmap',{zoomControl:true,attributionControl:true,scrollWheelZoom:false,doubleClickZoom:true,dragging:true});
+  tileLayer=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors · 경로 OSRM'}).addTo(lmap);
   lLayer=L.layerGroup().addTo(lmap);
-  document.getElementById('mapsrc').textContent='좌표 OSM 지오코딩 · 경로·소요시간 OSRM(교통 보정 1.35배)';
+  let errors=0;
+  tileLayer.on('tileload',()=>{tilesOk=true;});
+  tileLayer.on('tileerror',()=>{errors++; if(!tilesOk&&errors>=3&&useLeaflet)setMode('svg');});
+  setTimeout(()=>{ if(!tilesOk&&useLeaflet){setMode('svg');} },12000);
+  const pref=load('mapmode','leaflet');
+  setMode(pref==='svg'?'svg':'leaflet');
 }
 function leafletRender(dayId){
   lLayer.clearLayers();
@@ -664,7 +674,7 @@ function hexOfPin(k){for(const d of DAYS){if(d.route.includes(k))return d.hex;}r
 /* ---------- map ---------- */
 function renderMap(){if(useLeaflet)leafletRender(cur);else svgRender(cur);}
 svgRender(cur);
-tryLeaflet(ok=>{useLeaflet=ok;if(ok){initLeaflet();leafletRender(cur);}else{document.getElementById('mapsrc').textContent='약도 · 좌표 OSM 지오코딩 · 경로 OSRM';}});
+initLeaflet();
 
 /* ---------- itinerary (selected day) ---------- */
 const jump=document.getElementById('jump'), daysEl=document.getElementById('days');
